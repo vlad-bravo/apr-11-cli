@@ -31,6 +31,25 @@ def process(data: List[Union[int, List]], in_str: str) -> None:
         data[0] += 1
 
 
+def merge(data_all: List[List[Union[int, List]]]) -> List[Union[int, List]]:
+    result = data_all[0]
+    for data in data_all[1:]:
+        result[0] += data[0]
+        for element in data[1]:
+            for result_element in result[1]:
+                if result_element[0] == element[0]:
+                    break
+            else:
+                result_element = [element[0], 0, 0, 0, 0, 0]
+                result.append(result_element)
+            result_element[1] += element[1]
+            result_element[2] += element[2]
+            result_element[3] += element[3]
+            result_element[4] += element[4]
+            result_element[5] += element[5]
+    return result
+
+
 def result(data: List[Union[int, List]]) -> str:
     lines = [f'Total requests: {data[0]}']
     lines.append('')

@@ -9,5 +9,13 @@ def process(data, in_str):
     data[0] += 1
 
 
+def merge(data_all):
+    """Функция принимает массив результатов обработки различных логов и возвращает объединённый результат"""
+    result = data_all[0]
+    for data in data_all[1:]:
+        result[0] += data[0]
+    return result
+
+
 def result(data):
     return f'Total lines: {data[0]}'
