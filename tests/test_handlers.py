@@ -1,6 +1,6 @@
 import pytest
 
-from handlers import init, process, result
+from handlers import init, process, merge, result
 
 
 def test_init() -> None:
@@ -25,6 +25,36 @@ def test_init() -> None:
 def test_process(data, in_str: str, out_data) -> None:
     process(data, in_str)
     assert data == out_data
+
+
+def test_merge() -> None:
+    data_all = [
+        [
+            2,
+            [
+                ['/admin/login/', 0, 1, 0, 0 ,0],
+                ['/admin/dashboard/', 1, 0, 0, 0 ,0]
+            ]
+        ],
+        [
+            3,
+            [
+                ['/api/v1/orders/', 0, 0, 1, 0 ,0],
+                ['/api/v1/checkout/', 0, 0, 0, 1 ,0],
+                ['/admin/login/', 0, 0, 0, 0 ,1]
+            ]
+        ]
+    ]
+    data = [
+        5,
+        [
+            ['/admin/login/', 0, 1, 0, 0 ,1],
+            ['/admin/dashboard/', 1, 0, 0, 0 ,0],
+            ['/api/v1/orders/', 0, 0, 1, 0 ,0],
+            ['/api/v1/checkout/', 0, 0, 0, 1 ,0]
+        ]
+    ]
+    assert merge(data_all) == data
 
 
 def test_result() -> None:

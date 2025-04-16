@@ -41,7 +41,7 @@ def merge(data_all: List[List[Union[int, List]]]) -> List[Union[int, List]]:
                     break
             else:
                 result_element = [element[0], 0, 0, 0, 0, 0]
-                result.append(result_element)
+                result[1].append(result_element)
             result_element[1] += element[1]
             result_element[2] += element[2]
             result_element[3] += element[3]
