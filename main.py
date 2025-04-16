@@ -1,6 +1,6 @@
 import argparse
 
-from constants import REPORTS
+from reports import REPORTS
 
 def main():
     parser = argparse.ArgumentParser(description='Анализ журнала логирования')

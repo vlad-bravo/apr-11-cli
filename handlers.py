@@ -1,5 +1,12 @@
 from typing import Union, List
 
+from handlers_constants import (
+    HANDLER_NAME,
+    LEVEL_DEBUG, LEVEL_INFO, LEVEL_WARNING, LEVEL_ERROR, LEVEL_CRITICAL,
+    LEVEL_NAMES, LEVELS
+)
+
+
 
 def init() -> List[Union[int, List]]:
     return []
@@ -13,21 +20,15 @@ def process(data: List[Union[int, List]], in_str: str) -> None:
         else:
             handler = parts[4]
         for element in data:
-            if element[0] == handler:
+            if element[HANDLER_NAME] == handler:
                 break
         else:
             element = [handler, 0, 0, 0, 0, 0]
             data.append(element)
-        if level == 'DEBUG':
-            element[1] += 1
-        elif level == 'INFO':
-            element[2] += 1
-        elif level == 'WARNING':
-            element[3] += 1
-        elif level == 'ERROR':
-            element[4] += 1
-        elif level == 'CRITICAL':
-            element[5] += 1
+        
+        for level_name, level_index in zip(LEVEL_NAMES, LEVELS):
+            if level == level_name:
+                element[level_index] += 1
 
 
 def merge(data_all: List[List[Union[int, List]]]) -> List[Union[int, List]]:
@@ -35,31 +36,30 @@ def merge(data_all: List[List[Union[int, List]]]) -> List[Union[int, List]]:
     for data in data_all[1:]:
         for element in data:
             for result_element in result:
-                if result_element[0] == element[0]:
+                if result_element[HANDLER_NAME] == element[HANDLER_NAME]:
                     break
             else:
-                result_element = [element[0], 0, 0, 0, 0, 0]
+                result_element = [element[HANDLER_NAME], 0, 0, 0, 0, 0]
                 result.append(result_element)
-            result_element[1] += element[1]
-            result_element[2] += element[2]
-            result_element[3] += element[3]
-            result_element[4] += element[4]
-            result_element[5] += element[5]
+            
+            for level in LEVELS:
+                result_element[level] += element[level]
+
     return result
 
 
 def result(data: List[Union[int, List]]) -> str:
     total_requests = 0
     lines = ['', '']    # Total requests + empty line
-    lines.append('HANDLER              DEBUG     INFO      WARNING   ERROR     CRITICAL')
+    lines.append('HANDLER              ' + ''.join(map(lambda x: x.ljust(10), LEVEL_NAMES)))
     total_debug, total_info, total_warning, total_error, total_critical = 0, 0, 0, 0, 0
-    for element in sorted(data, key=lambda x: x[0]):
-        lines.append(f'{element[0]:<20} {element[1]:<9} {element[2]:<9} {element[3]:<9} {element[4]:<9} {element[5]:<9}')
-        total_debug += element[1]
-        total_info += element[2]
-        total_warning += element[3]
-        total_error += element[4]
-        total_critical += element[5]
+    for element in sorted(data, key=lambda x: x[HANDLER_NAME]):
+        lines.append(f'{element[HANDLER_NAME]:<21}' + ''.join(map(lambda x: f'{x:<10}', element[1:])))
+        total_debug += element[LEVEL_DEBUG]
+        total_info += element[LEVEL_INFO]
+        total_warning += element[LEVEL_WARNING]
+        total_error += element[LEVEL_ERROR]
+        total_critical += element[LEVEL_CRITICAL]
         total_requests += sum(element[1:])
     lines.append(f'                     {total_debug:<9} {total_info:<9} {total_warning:<9} {total_error:<9} {total_critical:<9}')
     lines[0] = f'Total requests: {total_requests}'
